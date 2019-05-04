@@ -1,0 +1,64 @@
+<?php
+/**
+ * Created by Vladimir Klintsoff
+ * Email: vlad.visitor@gmail.com
+ * Date: 25.04.2019
+ * Time: 20:50
+ */
+
+namespace maxdancepro\phoneFormatter\i18n;
+
+use yii\helpers\Html;
+
+/**
+ * Class Formatter
+ */
+class Formatter extends \yii\i18n\Formatter
+{
+    
+    
+    public function formattedPhoneNumber($phoneNumber = null, $mask = null)
+    {
+        if ($phoneNumber == null || $mask == null) {
+            return "Illegal parameters";
+        } else {
+            return $this->formatPhone($phoneNumber, $mask);
+        }
+    }
+
+    /**
+     * Formatting
+     *
+     * @param $phoneNumber
+     * @param string $mask
+     * 
+     * @return string
+     */
+    private function formatPhone($phoneNumber, $mask)
+    {
+        $result = "";
+        $countDigits = 0;
+
+        $phoneNumbersDigits = preg_replace("/[^0-9]/", "", $phoneNumber);
+        if (strlen($phoneNumbersDigits) < 11) {
+            return "Invalid Number format (less then 11 digits)";
+        }
+
+        $masksDigits = preg_replace("/[^0-9]/", "", $mask);
+        if (strlen($masksDigits) < 11) {
+            return "Invalid mask format (less then 11 digits)";
+        }
+
+        for($i = 0; $i < strlen($mask); $i++){
+            if(preg_match("/[^0-9]/", $mask[$i])){
+                $result .= $mask[$i];
+            }else{
+                $result .= $phoneNumbersDigits[$countDigits];
+                $countDigits++;
+            }
+        }
+
+        return $result;
+    }
+
+}
